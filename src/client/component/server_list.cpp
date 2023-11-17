@@ -316,6 +316,13 @@ namespace server_list
 
 	void handle_info_response(const game::netadr_s& address, const utils::info_string& info)
 	{
+		// Don't show servers that aren't using the same protocol!
+		const auto protocol = std::atoi(info.get("protocol").data());
+		if (protocol != PROTOCOL)
+		{
+			return;
+		}
+
 		// Don't show servers that aren't dedicated!
 		const auto dedicated = std::atoi(info.get("dedicated").data());
 		if (!dedicated)
@@ -403,7 +410,7 @@ namespace server_list
 				scheduler::once([]()
 				{
 					// add dvars to change destination master server ip/port
-					master_server_ip = dvars::register_string("masterServerIP", "h1.fed0001.xyz", game::DVAR_FLAG_NONE,
+					master_server_ip = dvars::register_string("masterServerIP", "h1.fed.cat", game::DVAR_FLAG_NONE,
 						"IP of the destination master server to connect to");
 					master_server_port = dvars::register_string("masterServerPort", "20810", game::DVAR_FLAG_NONE,
 						"Port of the destination master server to connect to");
